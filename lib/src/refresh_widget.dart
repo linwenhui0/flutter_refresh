@@ -128,11 +128,13 @@ class _RefreshHeaderState extends State<RefreshWidget>
   void _updateValue() {
     double value = Math.min(widget.controller.value, widget.height) /
         (widget.maxOffset + widget.height);
+    print("_updateValue($value)");
     //let's move head
     _positionController.value = value;
   }
 
   void _updateState() {
+    print("_updateState(${widget.controller.state})");
     switch (widget.controller.state) {
       case RefreshState.drag:
         break;

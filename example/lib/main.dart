@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 /**
  *
  */
@@ -66,14 +67,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   Future<Null> onHeaderRefresh() {
-    throw new Exception("");
-    /*
+//    throw new Exception("");
+
     return new Future.delayed(new Duration(seconds: 2), () {
       setState(() {
         _itemCount = 10;
       });
-    });*/
+    });
   }
+
+  ScrollController scrollController = ScrollController();
+  ScrollPhysics scrollPhysics = ClampingScrollPhysics();
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +89,37 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             child: new Refresh(
           onFooterRefresh: onFooterRefresh,
           onHeaderRefresh: onHeaderRefresh,
-          child: new ListView.builder(
-            itemBuilder: _itemBuilder,
-            itemCount: _itemCount,
+          child: NestedScrollView(
+            controller: scrollController,
+            physics: scrollPhysics,
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverOverlapAbsorber(
+                  handle:
+                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  child: SliverAppBar(
+                    pinned: false,
+                    floating: false,
+                    expandedHeight: 300,
+                    forceElevated: innerBoxIsScrolled,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Icon(Icons.add),
+                      collapseMode: CollapseMode.pin,
+                    ),
+                  ),
+                )
+              ];
+            },
+            body: CustomScrollView(
+              physics: scrollPhysics,
+              slivers: <Widget>[
+                SliverFixedExtentList(
+                  delegate: SliverChildBuilderDelegate(_itemBuilder,
+                      childCount: _itemCount),
+                  itemExtent: 60,
+                )
+              ],
+            ),
           ),
         )));
   }

@@ -13,6 +13,7 @@ bool checkChild(Widget src) {
     case GridView:
     case SingleChildScrollView:
     case ListView:
+    case NestedScrollView:
       {
         return true;
       }
@@ -66,6 +67,7 @@ class Refresh extends StatefulWidget {
       throw new Exception("childBuild or child must not be both null");
     }
   }
+
 //
 //  factory Refresh.singleChild(
 //      {Key key, Widget child, RefreshScrollViewBuilder childBuilder}) {
@@ -251,6 +253,9 @@ class _RefreshState extends State<Refresh> with TickerProviderStateMixin {
 
       case SingleChildScrollView:
         return (src as SingleChildScrollView).controller;
+
+      case NestedScrollView:
+        return (src as NestedScrollView).controller;
     }
 
     return null;
@@ -353,6 +358,21 @@ class _RefreshState extends State<Refresh> with TickerProviderStateMixin {
             scrollDirection: listView.scrollDirection,
           );
         }
+        break;
+      case NestedScrollView:
+        {
+          NestedScrollView nestedScrollView = src as NestedScrollView;
+          return new NestedScrollView(
+            headerSliverBuilder: nestedScrollView.headerSliverBuilder,
+            body: nestedScrollView.body,
+            physics: Refresh.createScrollPhysics(nestedScrollView.physics),
+            controller: nestedScrollView.controller,
+            key: nestedScrollView.key,
+            scrollDirection: nestedScrollView.scrollDirection,
+            reverse: nestedScrollView.reverse,
+          );
+        }
+        break;
     }
 
     return null;
